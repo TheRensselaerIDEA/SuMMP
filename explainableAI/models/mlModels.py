@@ -25,6 +25,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.cluster import KMeans
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.naive_bayes import BernoulliNB
 
 
 
