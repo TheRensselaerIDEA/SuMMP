@@ -9,4 +9,4 @@ from .supervisedBmm import SupervisedBMM
 from .supervisedGmm import SupervisedGMM
 
 __version__ = "0.0.1"
-__all__ = ["mlModels", "supervisedBmm", "SupervisedBMM", "SupervisedGMM"]
+__all__ = ["mlModels", "supervisedBmm", "supervisedGmm", "SupervisedBMM", "SupervisedGMM"]

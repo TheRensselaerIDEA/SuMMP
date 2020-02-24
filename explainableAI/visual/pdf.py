@@ -20,17 +20,18 @@ from reportlab.lib.pagesizes import letter
 #TODO: Index on __init__ script.
 
 class PDF():
-	def __init__(self, DIR="./"):
+	def __init__(self, DIR="."):
 		"""
 		Insert Arguments here
 		"""
 		self.doc = None
-		self.title = None
+		self._title = None
+		self.filename = None
 		self.styles = getSampleStyleSheet()
 		self.story = []
 		self.DIR = DIR
 
-	def newPDF(self, filename, **kwargs):
+	def _newPDF(self, filename, **kwargs):
 		"""
 		Generate a new pdf document.
 
@@ -43,10 +44,11 @@ class PDF():
 		# TODO: Insert check for previously existing pdf
 		# TODO: Error handle
 		# TODO: Add directory to filename
+		self.filename = filename
 		self.doc = SimpleDocTemplate(filename, **kwargs)
 
 
-	def title(self, title, style=self.styles["title"]):
+	def title(self, title, style=None):
 		"""
 		Insert a title to pdf
 
@@ -56,9 +58,11 @@ class PDF():
 			PDF title
 
 		"""
-		self.title = Paragraph(title, style)
+		if not style:
+			style = self.styles["title"]
+		self._title = Paragraph(title, style)
 
-	def table(self, dataframe, style=self.styles["Normal"]):
+	def table(self, dataframe, style=None):
 		"""
 		Generates a table with given styling and adds it to the storyboard
 
@@ -68,7 +72,8 @@ class PDF():
 			A dataframe, usually of a collection of results
 		"""
 		#TODO: Customizable alignment
-
+		if not style:
+			style = self.styles["Normal"]
 		header = []
 		row_list = []
 		for heading in dataframe.columns:
@@ -76,17 +81,25 @@ class PDF():
 		row_list.append(header)
 		data = dataframe.to_dict("split")["data"]
 		for record in data:
-			row = [Paragraph("<para align=center>%s</para>" % item, style) for item in data]
+			row = [Paragraph("<para align=center>%s</para>" % item, style) for item in record]
 			row_list.append(row)
 		t = Table(row_list, hAlign="CENTER")
 		t.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
 					('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
 		self.story.append(t)
+		
+	def text(self):
+		print("stub")
 
 	def plot(self):
 		# May be smart to generate separately and add pdf images (maybe def addImage?)
 		print("stub")
 
 	def build(self):
-		# TODO: Append title to beginning
-		print("stub")
+		if self._title:
+			self.story.insert(0, self._title)
+		if self.story:
+			self.story.append(PageBreak())
+			#print(self.story)
+			self.doc.build(self.story)
+			return self.filename
