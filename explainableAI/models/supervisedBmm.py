@@ -8,16 +8,6 @@ Updated on Sat Jan 25 10:02:27 2020
 
 import sys 
 
-sys.path.append('..')
-#sys.path.append('../SGMM')
-sys.path.append('../metrics')
-sys.path.append('../loaders')
-sys.path.append('../oldCode')
-sys.path.append('../visual')
-sys.path.append('../testingCodes')
-sys.path.append('../otherModels')
-
-
 def warn(*args, **kwargs):
     pass
 import warnings
@@ -30,10 +20,12 @@ from sklearn.linear_model import  SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from  scipy.stats import multivariate_normal
 from sklearn.cluster import KMeans
+import dill
 #from cvxopt import matrix
 #from cvxopt.solvers import qp
 from sklearn.linear_model import LogisticRegression
 import random as rdm
+import time
 
 
 class SupervisedBMM():
@@ -52,7 +44,7 @@ class SupervisedBMM():
                  mcov = 'diag', tol2 = 10**(-3), transduction = 0, adaR = 1,
                  verbose = 0, warm = 0, m_sparse = 0, m_sparseL = 10**(-3),
                  m_sp_it1 = 2, m_sp_it2 = 2, m_choice = 0, 
-                 m_LR = 0.001, m_mix = 1, altern = 0, log_reg = 'LG'):
+                 m_LR = 0.001, m_mix = 1, altern = 0, log_reg = 'LG', save=False):
         
         
         
@@ -207,6 +199,8 @@ class SupervisedBMM():
         
         #IF MODEL IS FITTED OR NOT
         self.fitted = None
+        #Save model for future use
+        self._save = save
         
         ######################################################################
         #TO DO 
@@ -215,7 +209,23 @@ class SupervisedBMM():
         #GIVE THE BINARY DATA COLUMNS AND USE THESE FOR BERNULLIS AND THE
         #REST WITH GAUSSIANS
         #######################################################################
-    #HELPER   
+    #HELPER 
+
+    @classmethod
+    def loader(cls, filename):
+        """
+        Initialize former model
+        """
+        with open(filename, "rb") as f:
+            return dill.load(f)
+
+    def save(self, filename='sbmm_model_%s.pkl' % time.strftime("%Y%m%d-%H%M%S")):
+        """
+        Save current model for future use
+        """
+        with open(filename, "wb") as f:
+            return dill.dumps(self, f)
+
     def split(self, data = None, X = None, y = None, split = 0.2):
         """
         A helper function to split data into training and test set
@@ -851,7 +861,8 @@ class SupervisedBMM():
         self.setWeights()
         
         self.setBernoulli( params )
-        
+        if self._save:
+            dill.dump(self, 'sbmm_model_%s.pkl' % time.strftime("%Y%m%d-%H%M%S"))
         return self
 
         
@@ -1112,3 +1123,12 @@ class SupervisedBMM():
             return mTrain2
         
         return mTrain
+
+    def loadModel(self, filename):
+        try:
+            SGMM_from_pkl = dill.load(filename)
+            return SGMM_from_pkl
+        except IOError as e:
+            print("I/O error({0}): {1}".format(e.errno, e.strerror))
+        except:  # handle other exceptions such as attribute errors
+            print("Unexpected error:", sys.exc_info()[0])

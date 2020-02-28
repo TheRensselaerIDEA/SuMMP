@@ -9,10 +9,13 @@ Documentation: https://www.reportlab.com/docs/reportlab-userguide.pdf
 """
 
 import pandas as pd
-from reportlab.lib.units import inch
+from io import BytesIO, StringIO
+
+from reportlab.lib.units import inch, cm
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, PageBreak
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, PageBreak, Flowable, Image
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 
@@ -20,6 +23,28 @@ from reportlab.lib.pagesizes import letter
 #TODO: Index on __init__ script.
 
 class PDF():
+	class PdfImage(Flowable):
+		def __init__(self, img_data, width=200, height=200):
+			self.img_width = width
+			self.img_height = height
+			self.img_data = img_data
+
+		def wrap(self, width, height):
+			return self.img_width, self.img_height
+
+		def drawOn(self, canv, x, y, _sW=0):
+			if _sW > 0 and hasattr(self, 'hAlign'):
+				a = self.hAlign
+				if a in ('CENTER', 'CENTRE', TA_CENTER):
+					x += 0.5*_sW
+				elif a in ('RIGHT', TA_RIGHT):
+					x += _sW
+				elif a not in ('LEFT', TA_LEFT):
+					raise ValueError("Bad hAlign value " + str(a))
+			canv.saveState()
+			canv.drawImage(self.img_data, x, y, self.img_width, self.img_height)
+			canv.restoreState()
+
 	def __init__(self, DIR="."):
 		"""
 		Insert Arguments here
@@ -88,18 +113,33 @@ class PDF():
 					('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
 		self.story.append(t)
 		
-	def text(self):
-		print("stub")
+	def text(self, text, style=None):
+		if not style:
+			style = self.styles["Normal"]
+		self.story.append(Paragraph(text, style))
 
-	def plot(self):
-		# May be smart to generate separately and add pdf images (maybe def addImage?)
-		print("stub")
+	def plot(self, fig, width, height):
+		"""
+		Draws matplotlib figure onto canvas
+		"""
+		imgdata = BytesIO()
+		fig.savefig(imgdata, format="png")
+		imgdata.seek(0) # rewind the data
+		im = ImageReader(imgdata)
+		image = self.PdfImage(im, width=width, height=height)
+		self.story.append(image)
+
+	def newline(self, style=None):
+		if not style:
+			style = self.styles["Normal"]
+		self.story.append(Paragraph("<br /><br />\n", style))
+
 
 	def build(self):
 		if self._title:
 			self.story.insert(0, self._title)
 		if self.story:
-			self.story.append(PageBreak())
+			self.newline()
 			#print(self.story)
 			self.doc.build(self.story)
 			return self.filename

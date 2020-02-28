@@ -8,16 +8,6 @@ Created on Mon Mar 18 19:14:37 2019
 
 import sys 
 
-sys.path.append('..')
-#sys.path.append('../SGMM')
-sys.path.append('../metrics')
-sys.path.append('../loaders')
-sys.path.append('../oldCode')
-sys.path.append('../visual')
-sys.path.append('../testingCodes')
-sys.path.append('../otherModels')
-
-
 def warn(*args, **kwargs):
     pass
 import warnings
@@ -30,9 +20,11 @@ from sklearn.linear_model import  SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from  scipy.stats import multivariate_normal
 from sklearn.cluster import KMeans
+import dill
 #from cvxopt import matrix
 #from cvxopt.solvers import qp
 from sklearn.linear_model import LogisticRegression
+import time
 import random as rdm
 
 ####THIS CODE HAS NUMERICAL ISSUES AT THE SPARCS DATASET
@@ -53,7 +45,7 @@ class SupervisedGMM():
                  mcov = 'diag', tol2 = 10**(-3), transduction = 0, adaR = 1,
                  verbose = 0, warm = 0, m_sparse = 0, m_sparseL = 10**(-3),
                  m_sp_it1 = 2, m_sp_it2 = 2, m_choice = 0, 
-                 m_LR = 0.001, m_mix = 1, altern = 0, log_reg = 'LG'):
+                 m_LR = 0.001, m_mix = 1, altern = 0, log_reg = 'LG', save=False):
         
         
         
@@ -210,6 +202,8 @@ class SupervisedGMM():
         
         #IF MODEL IS FITTED OR NOT
         self.fitted = None
+        #Save model
+        self._save = save
         
         ######################################################################
         #TO DO 
@@ -219,6 +213,23 @@ class SupervisedGMM():
         #REST WITH GAUSSIANS
         #######################################################################
     #HELPER   
+
+    @classmethod
+    def loader(cls, filename):
+        """
+        Initialize former model
+        """
+        with open(filename, "rb") as f:
+            return dill.load(f)
+
+    def save(self, filename='sgmm_model_%s.pkl' % time.strftime("%Y%m%d-%H%M%S")):
+        """
+        Save current model for future use
+        """
+        with open(filename, "wb") as f:
+            return dill.dump(self, f)
+
+
     def split(self, data = None, X = None, y = None, split = 0.2):
         """
         A helper function to split data into training and test set
@@ -519,7 +530,9 @@ class SupervisedGMM():
         #set the weights of LOGREG MEANS AND COVARIANCES OF GAUSSIANS
         self.setWeights()
         self.setGauss( params )
-        
+        if self._save:
+            with open('sgmm_model_%s.pkl' % time.strftime("%Y%m%d-%H%M%S"), "wb") as f:
+                dill.dump(self, f)
         return self
         #END OF FIT FUNCTION##################################################
         
@@ -1146,4 +1159,5 @@ class SupervisedGMM():
             return mTrain2
         
         return mTrain
+
             
