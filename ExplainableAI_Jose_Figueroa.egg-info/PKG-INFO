@@ -1,0 +1,25 @@
+Metadata-Version: 2.1
+Name: ExplainableAI-Jose-Figueroa
+Version: 0.0.1
+Summary: A collection of explainable AI tools as well as our own 'cadre' model.
+Home-page: https://github.com/josefigueroa168/ExplainableAI
+Author: Kristin Bennett, Jose Figueroa, George, Xiao Shao
+Author-email: josefigueroa168@gmail.com
+License: UNKNOWN
+Description: # ExplainableAI
+        
+        **explainableAI** is a high level Machine Learning Package built for easy use and client explainability. The package features our unique subpopulation detection "cadre" methods, Supervised Gaussian Mixture Model (SGMM) and Supervised Bernoulli Mixture Model, as well as access to state of the art supervised machine learning models for quick cross validation and analysis. 
+        
+        # Modules to add
+        
+        * Select a k for sgmm/sbmm models
+        * Cross validation
+        * Designate column types for heatmap gen
+        * General list comprehension for table method
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Classifier: License :: MIT License
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
