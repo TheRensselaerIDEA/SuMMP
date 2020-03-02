@@ -224,7 +224,7 @@ class SupervisedBMM():
         Save current model for future use
         """
         with open(filename, "wb") as f:
-            return dill.dumps(self, f)
+            return dill.dump(self, f)
 
     def split(self, data = None, X = None, y = None, split = 0.2):
         """

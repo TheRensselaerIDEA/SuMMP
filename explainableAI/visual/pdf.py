@@ -8,16 +8,19 @@ Documentation: https://www.reportlab.com/docs/reportlab-userguide.pdf
 @email: josefigueroa168@gmail.com
 """
 
-import pandas as pd
 from io import BytesIO, StringIO
+import pandas as pd
 
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch, cm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, PageBreak, Flowable, Image
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
+
 
 #TODO: Build custom ParagraphStyle class (Page 71 in doc) for customization of various items
 #TODO: Index on __init__ script.
@@ -72,6 +75,21 @@ class PDF():
 		self.filename = filename
 		self.doc = SimpleDocTemplate(filename, **kwargs)
 
+	def addStyle(self, name, **kwargs):
+		"""
+		Add custom styles to pdf.
+		"""
+		self.styles.add(ParagraphStyle(name=name, **kwargs))
+
+	def addFont(self, font):
+		"""
+		Goal is to add a general way to import fonts regardless of system and download
+		"""
+		#if font not in self.doc.getAvailableFonts():
+		#	raise KeyError("%s not found in available font directory" % font)
+		#else:
+		#pdfmetrics.registerFont(TTFont('%s' % font, '%s.ttf' % font))
+		print("Stub")
 
 	def title(self, title, style=None):
 		"""
@@ -83,7 +101,9 @@ class PDF():
 			PDF title
 
 		"""
-		if not style:
+		if style and style in self.styles:
+			style = self.styles[style]
+		else:
 			style = self.styles["title"]
 		self._title = Paragraph(title, style)
 
@@ -97,7 +117,9 @@ class PDF():
 			A dataframe, usually of a collection of results
 		"""
 		#TODO: Customizable alignment
-		if not style:
+		if style and style in self.styles:
+			style = self.styles[style]
+		else:
 			style = self.styles["Normal"]
 		header = []
 		row_list = []
@@ -114,7 +136,9 @@ class PDF():
 		self.story.append(t)
 		
 	def text(self, text, style=None):
-		if not style:
+		if style and style in self.styles:
+			style = self.styles[style]
+		else:
 			style = self.styles["Normal"]
 		self.story.append(Paragraph(text, style))
 
@@ -130,7 +154,9 @@ class PDF():
 		self.story.append(image)
 
 	def newline(self, style=None):
-		if not style:
+		if style and style in self.styles:
+			style = self.styles[style]
+		else:
 			style = self.styles["Normal"]
 		self.story.append(Paragraph("<br /><br />\n", style))
 
@@ -143,3 +169,50 @@ class PDF():
 			#print(self.story)
 			self.doc.build(self.story)
 			return self.filename
+
+
+"""
+Paragraph style parameters:
+'fontName':_baseFontName,
+ 'fontSize':10,
+ 'leading':12,
+ 'leftIndent':0,
+ 'rightIndent':0,
+ 'firstLineIndent':0,
+ 'alignment':TA_LEFT,
+ 'spaceBefore':0,
+ 'spaceAfter':0,
+ 'bulletFontName':_baseFontName,
+ 'bulletFontSize':10,
+ 'bulletIndent':0,
+ 'textColor': black,
+ 'backColor':None,
+ 'wordWrap':None,
+ 'borderWidth': 0,
+ 'borderPadding': 0,
+ 'borderColor': None,
+ 'borderRadius': None,
+ 'allowWidows': 1,
+ 'allowOrphans': 0,
+ 'textTransform':None,
+ 'endDots':None,
+ 'splitLongWords':1,
+ 'underlineWidth': _baseUnderlineWidth,
+ 'bulletAnchor': 'start',
+ 'justifyLastLine': 0,
+ 'justifyBreaks': 0,
+ 'spaceShrinkage': _spaceShrinkage,
+ 'strikeWidth': _baseStrikeWidth, #stroke width
+ 'underlineOffset': _baseUnderlineOffset, #fraction of fontsize to offset underlines
+ 'underlineGap': _baseUnderlineGap, #gap for double/triple underline
+ 'strikeOffset': _baseStrikeOffset, #fraction of fontsize to offset strikethrough
+User Guide Chapter 6 Paragraphs
+Page 71
+ 'strikeGap': _baseStrikeGap, #gap for double/triple strike
+ 'linkUnderline': _platypus_link_underline,
+ #'underlineColor': None,
+ #'strikeColor': None,
+ 'hyphenationLang': _hyphenationLang,
+ 'uriWasteReduce': _uriWasteReduce,
+ 'embeddedHyphenation': _embeddedHyphenation,
+ """
