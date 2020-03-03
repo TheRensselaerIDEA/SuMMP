@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
 	long_description = fh.read()
 	
 setuptools.setup(
-	name="ExplainableAI-Jose-Figueroa",
+	name="ExplainableAI",
 	version="0.0.1",
 	author="Kristin Bennett, Jose Figueroa, George, Xiao Shao",
 	author_email="josefigueroa168@gmail.com",
