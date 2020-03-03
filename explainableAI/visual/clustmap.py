@@ -35,11 +35,15 @@ def plotclustmap_simple(means,featureslice):
     
     return 
 
-def plotclustmap(means,variance,featureslice,clustpop,normtype):
+def plotclustmap(means,variance,featureslice,clustpop,normtype,clust_name=None):
     # map 3 levels
+    if clust_name:
+        clustname = clust_name
+    elif: 
+        clustname = np.arange(means.shape[1])
     cmap = mpl.colors.LinearSegmentedColormap.from_list("", ["blue","#fed0fc","red"])
     if normtype == None:
-        cg = sns.clustermap(means,yticklabels = featureslice, xticklabels = np.arange(means.shape[1]),standard_scale=None,col_cluster=False,cbar_kws={"ticks":[-1,0,1]}, figsize =(12,12),cmap=cmap) 
+        cg = sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=None,col_cluster=False,cbar_kws={"ticks":[-1,0,1]}, figsize =(12,12),cmap=cmap) 
         #plt.setp(cg.ax_heatmap.xaxis.get_majorticklabels(), rotation=45)
         cg.ax_row_dendrogram.set_visible(False)
         cg.cax.set_visible(False)
