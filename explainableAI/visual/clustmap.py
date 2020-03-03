@@ -39,7 +39,7 @@ def plotclustmap(means,variance,featureslice,clustpop,normtype,clust_name=None):
     # map 3 levels
     if clust_name:
         clustname = clust_name
-    elif: 
+    else: 
         clustname = np.arange(means.shape[1])
     cmap = mpl.colors.LinearSegmentedColormap.from_list("", ["blue","#fed0fc","red"])
     if normtype == None:
