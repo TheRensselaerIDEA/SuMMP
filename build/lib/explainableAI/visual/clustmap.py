@@ -35,24 +35,23 @@ def plotclustmap_simple(means,featureslice):
     
     return 
 
-def plotclustmap(means,variance,featureslice,clustpop,normtype,clust_name=None):
+def plotclustmap(means,variance,featureslice,clustpop,normtype,clust_name=None,**kwargs):
     # map 3 levels
     if clust_name:
         clustname = clust_name
     else: 
         clustname = np.arange(means.shape[1])
-    cmap = mpl.colors.LinearSegmentedColormap.from_list("", ["blue","#fed0fc","red"])
     if normtype == None:
-        cg = sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=None,col_cluster=False,cbar_kws={"ticks":[-1,0,1]}, figsize =(12,12),cmap=cmap) 
+        cg = sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=None,col_cluster=False,cbar_kws={"ticks":[-1,0,1]}, figsize =(12,12),**kwargs) 
         #plt.setp(cg.ax_heatmap.xaxis.get_majorticklabels(), rotation=45)
         cg.ax_row_dendrogram.set_visible(False)
         cg.cax.set_visible(False)
     # row scaled    
     elif normtype == 0:
-        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=0,col_cluster=False)
+        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=0,col_cluster=False, **kwargs)
     # column scaled    
     elif normtype == 1:
-        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=1,col_cluster=False)
+        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=1,col_cluster=False, **kwargs)
     # 2 : 1- max (list of pvals)   
     elif normtype == 2:
         stdev = np.sqrt(variance)
@@ -70,7 +69,7 @@ def plotclustmap(means,variance,featureslice,clustpop,normtype,clust_name=None):
             pval_temp = pval_temp + pval_temp.T
             pval_table[i,:] = 1-pval_temp.max(axis=1)
         sns.clustermap(pval_table,yticklabels = featureslice, 
-                       xticklabels =np.arange(means.shape[0]),standard_scale=None,col_cluster=False)
+                       xticklabels =np.arange(means.shape[0]),standard_scale=None,col_cluster=False, **kwargs)
     # 3 : 1- average (list of pvals)
     elif normtype == 3:
         stdev = np.sqrt(variance)
@@ -88,7 +87,7 @@ def plotclustmap(means,variance,featureslice,clustpop,normtype,clust_name=None):
             pval_temp = pval_temp + pval_temp.T
             pval_table[i,:] = 1-pval_temp.mean(axis=1)
         sns.clustermap(pval_table,yticklabels = featureslice, 
-                       xticklabels =np.arange(means.shape[0]),standard_scale=None,col_cluster=False)
+                       xticklabels =np.arange(means.shape[0]),standard_scale=None,col_cluster=False, **kwargs)
     # 4 : 1 - min(list of pvals)
     elif normtype == 4:
         stdev = np.sqrt(variance)
@@ -106,11 +105,11 @@ def plotclustmap(means,variance,featureslice,clustpop,normtype,clust_name=None):
             pval_temp = pval_temp + pval_temp.T
             pval_table[i,:] = 1-pval_temp.min(axis=1)
         sns.clustermap(pval_table,yticklabels = featureslice, 
-                       xticklabels =np.arange(means.shape[0]),standard_scale=None,col_cluster=False)
+                       xticklabels = clustname,standard_scale=None,col_cluster=False, **kwargs)
     # 100 : print none ,row, column scaled
     elif normtype == 100:
-        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=None,col_cluster=False)
-        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=0,col_cluster=False)
-        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=1,col_cluster=False)
+        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=None,col_cluster=False, **kwargs)
+        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=0,col_cluster=False, **kwargs)
+        sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=1,col_cluster=False, **kwargs)
         
     return 
