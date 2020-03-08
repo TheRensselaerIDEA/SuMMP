@@ -1,6 +1,7 @@
 .DS_Store
 LICENSE
 README.md
+SGMM_Newborn.ipynb
 exAI
 requirements.txt
 setup.py
@@ -46,3 +47,4 @@ explainableAI/visual/__pycache__/pdf.cpython-37.pyc
 test_models/BMM_LG_miter_30_miter2_10_nclust_5_seed_100.plk
 test_models/GMM_LG_miter_30_miter2_10_nclust_5_seed_100.plk
 test_models/SBMM_niter1_30_niter2_30_nclust_7_seed_71730.pkl
+test_models/SGMM_niter1_30_niter2_30_nclust_7_seed_21274.pkl
