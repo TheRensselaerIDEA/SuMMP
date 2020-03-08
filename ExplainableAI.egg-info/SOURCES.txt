@@ -12,7 +12,6 @@ ExplainableAI.egg-info/dependency_links.txt
 ExplainableAI.egg-info/top_level.txt
 dist/.DS_Store
 dist/ExplainableAI-0.0.1-py3-none-any.whl
-dist/ExplainableAI-0.0.1.tar.gz
 explainableAI/.DS_Store
 explainableAI/__init__.py
 explainableAI/__pycache__/__init__.cpython-37.pyc

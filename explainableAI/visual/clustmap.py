@@ -42,7 +42,7 @@ def plotclustmap(means,variance,featureslice,clustpop,normtype,clust_name=None,*
     else: 
         clustname = np.arange(means.shape[1])
     if normtype == None:
-        cg = sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=None,col_cluster=False,cbar_kws={"ticks":[-1,0,1]}, figsize =(12,12),**kwargs) 
+        cg = sns.clustermap(means,yticklabels = featureslice, xticklabels = clustname,standard_scale=None,col_cluster=False, figsize =(14,14),**kwargs) 
         plt.setp(cg.ax_heatmap.xaxis.get_majorticklabels(), rotation=45)
         cg.ax_row_dendrogram.set_visible(False)
         cg.cax.set_visible(False)
