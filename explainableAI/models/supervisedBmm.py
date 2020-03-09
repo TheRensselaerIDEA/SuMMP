@@ -351,7 +351,7 @@ class SupervisedBMM():
     def fitLogisticRegression(self, n_clusters, mTrain, adaR, alpha, max_iter,
                               tol2, Xtrain, ytrain, vb, penalty, scoring,
                               cv, regk, ind1, indexing, logiProb, logLogist,
-                              param_grid, lg_regr, C,  hard_cluster):
+                              param_grid, lg_regr, C, solver, hard_cluster):
         
         """ FIT LOGISTIC REGRESSION FOR EACH CLUSTER 
             n_clusters: number of gaussians -- clusters
@@ -421,7 +421,7 @@ class SupervisedBMM():
                                       random_state = 0, tol = tol2)
                 else:
                 
-                    mf = LogisticRegression( penalty = penalty, tol = tol2,
+                    mf = LogisticRegression( solver=solver, penalty = penalty, tol = tol2,
                                              random_state = 0, 
                                         max_iter = max_iter, n_jobs = -1)
                  
@@ -726,7 +726,7 @@ class SupervisedBMM():
                               n_clusters, mTrain, adaR, alpha, max_iter,
                               tol2, Xtrain, ytrain, vb, penalty, scoring,
                               cv, regk, ind1, indexing, logiProb, logLogist, 
-                              param_grid,  lg_regr, C,
+                              param_grid,  lg_regr, C, solver,
                                               hard_cluster = hard_cluster )
                 
             else: #IF WE USE SIMPLE MIXTURES OF GAUSSIANS JUST FIT AT LAST ITER
@@ -735,7 +735,7 @@ class SupervisedBMM():
                               n_clusters, mTrain, adaR, alpha, max_iter,
                               tol2, Xtrain, ytrain, vb, penalty, scoring,
                               cv, regk, ind1, indexing, logiProb, logLogist, 
-                              param_grid, lg_regr, C,  hard_cluster = hard_cluster )
+                              param_grid, lg_regr, C, solver, hard_cluster = hard_cluster )
                     
             #WE TAKE THE MEMBERSHIPS AND ALL THE DATA
             #TO FIT THE GAUSSIANS USING THE EM ALGORITHM FOR GMM 
