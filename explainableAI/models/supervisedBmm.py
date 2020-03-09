@@ -14,18 +14,17 @@ import warnings
 warnings.warn = warn
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
+import dill
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import  SGDClassifier
 from sklearn.model_selection import GridSearchCV
-from  scipy.stats import multivariate_normal
+#from  scipy.stats import multivariate_normal
 from sklearn.cluster import KMeans
-import dill
 #from cvxopt import matrix
 #from cvxopt.solvers import qp
 from sklearn.linear_model import LogisticRegression
 import random as rdm
-import time
 
 
 class SupervisedBMM():
@@ -44,12 +43,12 @@ class SupervisedBMM():
                  mcov = 'diag', tol2 = 10**(-3), transduction = 0, adaR = 1,
                  verbose = 0, warm = 0, m_sparse = 0, m_sparseL = 10**(-3),
                  m_sp_it1 = 2, m_sp_it2 = 2, m_choice = 0, 
-                 m_LR = 0.001, m_mix = 1, altern = 0, log_reg = 'LG', save=False):
+                 m_LR = 0.001, m_mix = 1, altern = 0, log_reg = 'LG'):
         
         
         
         """ MODEL  PARAMETERES:
-             
+            
             max_iter:[INT] #Number of epochs of SGD default 1000
             cv:[INT] Cross Validation: Default 5 Fold
             mix:{FLOAT] In what Percentages to Upadate Memberships in respect with
@@ -92,7 +91,6 @@ class SupervisedBMM():
             log_reg: [STRING], "SGD" stochastic gradient descend,
                                "LG" Logistic Regression
             
-                
                 
     
         """
@@ -200,8 +198,6 @@ class SupervisedBMM():
         
         #IF MODEL IS FITTED OR NOT
         self.fitted = None
-        #Save model for future use
-        self._save = save
         
         ######################################################################
         #TO DO 
@@ -210,8 +206,7 @@ class SupervisedBMM():
         #GIVE THE BINARY DATA COLUMNS AND USE THESE FOR BERNULLIS AND THE
         #REST WITH GAUSSIANS
         #######################################################################
-    #HELPER 
-
+    #HELPER   
     @classmethod
     def loader(cls, filename):
         """
@@ -599,7 +594,7 @@ class SupervisedBMM():
     def fitB(self, Xtrain = None, ytrain = None, Xtest = None, ind1 = None,
                     ind2 = None, mTrain1 = None, mTest1 = None, 
                     kmeans = 0, mod = 1, simple = 0, comp_Lik = 0,
-                    memb_mix = 0.0, hard_cluster = 0, logger=None):
+                    memb_mix = 0.0, hard_cluster = 0):
         """ 
             Fit the Supervised Mixtures of Bernoulli Model
             
@@ -634,8 +629,6 @@ class SupervisedBMM():
         self._KMeans = kmeans
         
         if Xtrain is None or ytrain is None  :
-            if logger:
-                logger.error(" Please Give Xtrain, ytrain, Xtest  data ")
             print(" Please Give Xtrain, ytrain, Xtest  data ")
             return
         
@@ -823,8 +816,7 @@ class SupervisedBMM():
             if trans == 1:
                 mTest = mNewTest*(1-mix) + mTest*(mix)
         
-            if logger:
-                logger.debug("BMM iteration: {}, error: {}".format(iter2, error))
+            
             print("BMM iteration: {}, error: {}".format(iter2, error))
             if error < tol:
                 
@@ -862,8 +854,7 @@ class SupervisedBMM():
         self.setWeights()
         
         self.setBernoulli( params )
-        if self._save:
-            dill.dump(self, 'sbmm_model_%s.pkl' % time.strftime("%Y%m%d-%H%M%S"))
+        
         return self
 
         
@@ -953,9 +944,9 @@ class SupervisedBMM():
         #mixing coefficient
         pk = Nk/N  
         #print("Minimum of memb {} max{}".format(np.min( memb), np.max( memb)))
-        meank = np.sum( ( X.T * memb ).T, axis = 0) / Nk
+        meank = np.sum( ( X.T * memb ).T, axis = 0) / Nk 
        
-        meankOne = 1-meank
+        meankOne = 1-meank  
         meanklog = np.log(meank + 10**(-9) )
         meankOnelog = np.log(meankOne + 10**(-9))
         
@@ -1001,7 +992,7 @@ class SupervisedBMM():
         for i in range( len(self.params['means']) ):
             meanB[:,i] = self.params['means'][i] 
         #regk = 10**(-5)/nclusters
-        meanBOne = 1 - meanB# + regk
+        meanBOne = 1 - meanB # + regk
         meanBlog = np.log ( meanB + 10**(-9) ) #( meanB + regk )
         meanBOnelog = np.log( meanBOne + 10**(-9) )
 

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Mar 18 19:14:37 2019
-
 @author: george
 """
 
 import sys 
+import dill
 
 def warn(*args, **kwargs):
     pass
@@ -20,11 +20,9 @@ from sklearn.linear_model import  SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from  scipy.stats import multivariate_normal
 from sklearn.cluster import KMeans
-import dill
 #from cvxopt import matrix
 #from cvxopt.solvers import qp
 from sklearn.linear_model import LogisticRegression
-import time
 import random as rdm
 
 ####THIS CODE HAS NUMERICAL ISSUES AT THE SPARCS DATASET
@@ -45,7 +43,7 @@ class SupervisedGMM():
                  mcov = 'diag', tol2 = 10**(-3), transduction = 0, adaR = 1,
                  verbose = 0, warm = 0, m_sparse = 0, m_sparseL = 10**(-3),
                  m_sp_it1 = 2, m_sp_it2 = 2, m_choice = 0, 
-                 m_LR = 0.001, m_mix = 1, altern = 0, log_reg = 'LG', save=False):
+                 m_LR = 0.001, m_mix = 1, altern = 0, log_reg = 'LG'):
         
         
         
@@ -202,8 +200,6 @@ class SupervisedGMM():
         
         #IF MODEL IS FITTED OR NOT
         self.fitted = None
-        #Save model
-        self._save = save
         
         ######################################################################
         #TO DO 
@@ -228,7 +224,6 @@ class SupervisedGMM():
         """
         with open(filename, "wb") as f:
             return dill.dump(self, f)
-
 
     def split(self, data = None, X = None, y = None, split = 0.2):
         """
@@ -270,7 +265,7 @@ class SupervisedGMM():
     def fit(self, Xtrain = None, ytrain = None, Xtest = None, ind1 = None,
                     ind2 = None, mTrain1 = None, mTest1 = None, 
                     kmeans = 0, mod = 1, simple = 0, comp_Lik = 0,
-                    memb_mix = 0.0, hard_cluster = 0, logger=None):
+                    memb_mix = 0.0, hard_cluster = 0):
         """ 
             Fit the Supervised Mixtures of Gaussian Model
             
@@ -491,8 +486,7 @@ class SupervisedGMM():
             if trans == 1:
                 mTest = mNewTest*(1-mix) + mTest*(mix)
         
-            if logger:
-                logger.debug("GMM iteration: {}, error: {}".format(iter2, error))
+            
             print("GMM iteration: {}, error: {}".format(iter2, error))
             if error < tol:
                 
@@ -530,9 +524,7 @@ class SupervisedGMM():
         #set the weights of LOGREG MEANS AND COVARIANCES OF GAUSSIANS
         self.setWeights()
         self.setGauss( params )
-        if self._save:
-            with open('sgmm_model_%s.pkl' % time.strftime("%Y%m%d-%H%M%S"), "wb") as f:
-                dill.dump(self, f)
+        
         return self
         #END OF FIT FUNCTION##################################################
         
@@ -572,7 +564,7 @@ class SupervisedGMM():
             
             else: #KMEANS INITIALIZATION
                 
-                km = KMeans( n_clusters = n_clusters)
+                km = KMeans( n_clusters = n_clusters )
                 
                 if simple == 0:
                     rdm.seed(0)
@@ -698,8 +690,7 @@ class SupervisedGMM():
                 
                     mf = LogisticRegression( penalty = penalty, tol = tol2,
                                              random_state = 0, 
-                                        max_iter = max_iter, n_jobs = -1,
-                                        solver='liblinear')
+                                        max_iter = max_iter, n_jobs = -1)
                  
                 model = GridSearchCV( mf, param_grid = param_grid, 
                                   n_jobs = -1, 
@@ -1159,5 +1150,3 @@ class SupervisedGMM():
             return mTrain2
         
         return mTrain
-
-            
