@@ -25,6 +25,7 @@ from sklearn.cluster import KMeans
 #from cvxopt.solvers import qp
 from sklearn.linear_model import LogisticRegression
 import random as rdm
+import time
 
 
 class SupervisedBMM():
