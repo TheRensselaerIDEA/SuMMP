@@ -321,7 +321,7 @@ class SupervisedGMM():
         mix = self._mix
         penalty = self._penalty
         scoring = self._scoring
-        #solver = self._solver
+        solver = self._solver
         max_iter2 = self._max_iter2
         trans = self._trans
         C = self._C
