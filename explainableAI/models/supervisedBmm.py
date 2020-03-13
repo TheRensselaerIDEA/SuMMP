@@ -828,7 +828,7 @@ class SupervisedBMM():
                               n_clusters, mTrain, adaR, alpha, max_iter,
                               tol2, Xtrain, ytrain, vb, penalty, scoring,
                               cv, regk, ind1, indexing, logiProb, logLogist, 
-                              param_grid, lg_regr, C,
+                              param_grid, lg_regr, C, solver,
                                                   hard_cluster = hard_cluster )
 
         #self.mixesB = params['pis']
