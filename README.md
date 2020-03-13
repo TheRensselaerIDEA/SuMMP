@@ -1,10 +1,11 @@
-# ExplainableAI
+# Supervised Mixture Models for Population Health
 
-**explainableAI** is a high level Machine Learning Package built for easy use and client explainability. The package features our unique subpopulation detection "cadre" methods, Supervised Gaussian Mixture Model (SGMM) and Supervised Bernoulli Mixture Model, as well as access to state of the art supervised machine learning models for quick cross validation and analysis. 
+**SuMMP** (Supervised Mixture Models for Population Health) is the repository that accompanies the research paper by Xiao Shou et al. of the same name.
 
-# Modules to add
+# Directories
 
-* Select a k for sgmm/sbmm models
-* Cross validation
-* Designate column types for heatmap gen
-* General list comprehension for table method
+**Data**: SPARCS datasets of the following categories: Newborn, CircSyst, Pregnant
+**Notebooks**: Jupyter notebooks for procedure visualization. Newborn notebook can be rum on colab. 
+**dist**: "ExplainableAI" Pip package wheel
+**ExplainableAI**: All relevant code, including SGMM and SBMM models.
+**test_models**: Pre-run models for fast reproducible results. 
